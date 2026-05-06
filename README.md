@@ -5,17 +5,17 @@
 ## Cross IDE Aligned
 
 1. VSCode + Copilot
-    - Rules   → Instructions
-    - Command → Prompts
+    - Rules     → Instructions
+    - Workflows → Prompts
 2. Windsurf
     - Rules
-    - Command → Workflows
+    - Workflows
 3. VSCode + Cline + MiniMax
     - Rules   → Rules
-    - Command → Workflows
-4. PowerShell + Kilo Code Cli + GLM
+    - Workflows
+4. PowerShell + KiloCode Cli + GLM
     - Rules
-    - Command → Workflows
+    - Workflows
 
 ## 参考资料
 
