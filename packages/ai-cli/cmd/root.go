@@ -15,7 +15,7 @@ var rootCmd = &cobra.Command{
 
 Available commands:
   hasshin   Identify the calling shell or environment
-  doctor    Diagnose the CLI runtime environment`,
+  blame     Create a blame on a plan`,
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},
