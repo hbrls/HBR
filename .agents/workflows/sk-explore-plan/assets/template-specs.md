@@ -1,8 +1,3 @@
----
-name: template-specs
-version: 0.0.2
----
-
 # Specs
 
 - [ ] **SPEC-001**：{Spec 名称}
