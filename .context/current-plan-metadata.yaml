@@ -1,0 +1,4 @@
+# READONLY METADATA
+- appId: HBR
+- planId: PLAN-001
+- source: "$ backstage-gitea plan GET /HBR/PLAN-001"

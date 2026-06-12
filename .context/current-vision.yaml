@@ -1,0 +1,19 @@
+visions:
+  - GLNT-1 # 荣耀 Android AppList 问题排查
+  - GLNT-2 # 华为鸿蒙卓易通问题排查
+  - GLNT-3 # iOS 硬件标识 / 稳定 ID 维度调研
+  - GLNT-4 # Android 计算维度全集
+  - GLNT-5 # 设备信息采集功能设计
+  - GLNT-6 # 国内备案知识与流程梳理
+  - GLNT-7 # 恢复 CLKLOG 全埋点数据体系
+
+roadmap:
+  - GLNT-7: # 恢复 CLKLOG 全埋点数据体系
+      - GLNT-3: # iOS 硬件标识 / 稳定 ID 维度调研
+          - GLNT-2 # 华为鸿蒙卓易通问题排查
+      - GLNT-4 # Android 计算维度全集
+
+active-visions:
+  - GLNT-7
+last-vision: GLNT-7
+last-vision-updated-at: 2026-07-02T14:32:05+08:00

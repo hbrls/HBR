@@ -17,6 +17,13 @@
     - Rules
     - Workflows
 
+## Gstack
+
+https://github.com/garrytan/gstack
+
+1. REMOVED: browse
+2. REMOVED: setup-browser-cookies
+
 ## 参考资料
 
 1. https://github.com/kingkongshot/Pensieve
