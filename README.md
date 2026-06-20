@@ -10,10 +10,10 @@
 2. Windsurf
     - Rules
     - Workflows
-3. VSCode + Cline + MiniMax
-    - Rules   → Rules
+3. VSCode + Cline
+    - Rules     → Rules
     - Workflows
-4. PowerShell + KiloCode Cli + GLM
+4. KiloCode Cli
     - Rules
     - Workflows
 
