@@ -1,0 +1,6 @@
+# READONLY# READONLY METADATA
+- appId: cms-mgr
+- planId: PLAN-102
+- phaseId: PHASE-200
+- taskId: TASK-110
+- $metadata: "$ backstage-gitea plan HEAD /cms-mgr/PLAN-102/PHASE-200/TASK-110"
