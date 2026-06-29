@@ -29,3 +29,7 @@ func ExtractTicketId(prefix, ticketTitle string) (string, string, string, error)
 func ExtractBlameId(issueTitle string) (string, string, string, error) {
 	return ExtractTicketId("BLAME", issueTitle)
 }
+
+func ExtractUseId(issueTitle string) (string, string, string, error) {
+	return ExtractTicketId("USE", issueTitle)
+}

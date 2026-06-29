@@ -41,6 +41,39 @@ func GenNextBlameId(appName, planId string) (string, error) {
 	return fmt.Sprintf("BLAME-%s", nextId), nil
 }
 
+func GenNextUseId(appName, planId string) (string, error) {
+	adapter, err := internalGitea.NewAdapter()
+	if err != nil {
+		return "", err
+	}
+
+	issues, err := adapter.SearchIssueByPrefix(appName, planId, "USE-")
+	if err != nil {
+		return "", err
+	}
+
+	var ids []string
+	for _, issue := range issues {
+		_, _, id, err := ExtractUseId(issue.Title)
+		if err != nil {
+			return "", err
+		}
+		ids = append(ids, id)
+	}
+
+	sort.Strings(ids)
+	if len(ids) == 0 {
+		ids = append(ids, "000")
+	}
+
+	nextId, err := genNextId(ids)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("USE-%s", nextId), nil
+}
+
 // genNextId 私有方法
 // 规则：连续递增（如 100 → 101，225 → 226）
 func genNextId(existIds []string) (string, error) {
