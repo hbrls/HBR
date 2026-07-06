@@ -22,7 +22,8 @@ var blameCmd = &cobra.Command{
 	Long: `Create a blame on a plan.
 
 Examples:
-  ai blame /cms-mgr/PLAN-102 --title "Problem" --context "Full Description"`,
+  ai blame /cms-mgr/PLAN-102 --title "Problem" --context "Full Description"
+  ai blame /cms-mgr --title "Problem" --context "Full Description"  # planId unknown`,
 	Args: cobra.RangeArgs(1, 2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var method string
@@ -64,6 +65,16 @@ func init() {
 			return nil, fmt.Errorf("blame /:appId/:planId requires --context flag")
 		}
 		return internalBlame.CreateBlame(params["appId"], params["planId"], args["title"], args["context"])
+	})
+
+	blameRouter.Verb("", "/:appId", func(method, pattern, pathname string, params, args map[string]string) (interface{}, error) {
+		if args["title"] == "" {
+			return nil, fmt.Errorf("blame /:appId requires --title flag")
+		}
+		if args["context"] == "" {
+			return nil, fmt.Errorf("blame /:appId requires --context flag")
+		}
+		return internalBlame.CreateBlame(params["appId"], "unknown", args["title"], args["context"])
 	})
 
 	blameCmd.Flags().SortFlags = false

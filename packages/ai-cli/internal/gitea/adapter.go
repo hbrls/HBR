@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"code.gitea.io/sdk/gitea"
+	"com.lisitede.ai/framework"
 )
 
 // Adapter Gitea API 适配器
@@ -55,4 +56,33 @@ func (a *Adapter) CreateIssue(owner, repo, title string, context string, milesto
 	}
 	issue, _, err := a.client.CreateIssue(owner, repo, opts)
 	return issue, err
+}
+
+// GetLabelByName 按名称查询仓库标签
+func (a *Adapter) GetLabelByName(owner, repo, labelName string) (*gitea.Label, error) {
+	labels, _, err := a.client.ListRepoLabels(owner, repo, gitea.ListLabelsOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, label := range labels {
+		if label.Name == labelName {
+			return label, nil
+		}
+	}
+
+	return nil, framework.NotFoundException("label not found: " + labelName)
+}
+
+// AddLabelToIssue 给 Issue 添加标签
+// issueId / labelId 均为数字的字符串形式
+func (a *Adapter) AddLabelToIssue(owner, repo, issueId, labelId string) ([]*gitea.Label, error) {
+	var issueIdInt, labelIdInt int64
+	fmt.Sscanf(issueId, "%d", &issueIdInt)
+	fmt.Sscanf(labelId, "%d", &labelIdInt)
+
+	labels, _, err := a.client.AddIssueLabels(owner, repo, issueIdInt, gitea.IssueLabelsOption{
+		Labels: []int64{labelIdInt},
+	})
+	return labels, err
 }
