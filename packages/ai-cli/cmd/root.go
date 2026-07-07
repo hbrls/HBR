@@ -15,7 +15,8 @@ var rootCmd = &cobra.Command{
 
 Available commands:
   hasshin   Identify the calling shell or environment
-  blame     Create a blame on a plan`,
+  blame     Create a blame on a plan
+  get       Get a resource`,
 	CompletionOptions: cobra.CompletionOptions{
 		DisableDefaultCmd: true,
 	},

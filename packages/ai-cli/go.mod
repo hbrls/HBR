@@ -10,6 +10,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/ucarion/urlpath v0.0.0-20200424170820-7ccc79b76bbb
 	golang.org/x/sys v0.33.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
