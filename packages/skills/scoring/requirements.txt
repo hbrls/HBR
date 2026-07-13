@@ -1,0 +1,4 @@
+# Offline 拟合依赖（fit 脚本使用，不进 Runtime）
+# Python >= 3.11
+numpy==2.4.6
+scipy==1.16.3
