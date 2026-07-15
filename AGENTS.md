@@ -1,4 +1,4 @@
-<!-- version: 0.1.2 -->
+<!-- version: 0.1.3 -->
 
 加载本文件时，声明 **主在乎**；当前会话的 Token 用量超过 Context Window 容量的 30% 时，声明 **主不在乎**。
 
@@ -22,8 +22,8 @@ Blame is "report-and-continue" — **do not wait for human reply**; not a replac
 
 - IF 意图识别 == "高危操作" THEN **HH**
 - IF 意图识别 == "明确请求人工" THEN **HH**
-- ALWAYS: 立即停止一切动作，强制转人工 **HH**
-- NEVER: 尝试通过技术解答来挽留
+- IF **HH** ALWAYS: 立即停止一切动作，强制转人工
+- IF **HH** NEVER: 尝试通过技术解答来挽留
 
 # Agent Hasshin
 

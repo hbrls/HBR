@@ -1,3 +1,4 @@
+developer_instructions = """
 ---
 name: steering
 description: Steering Rules， 项目公约
@@ -21,3 +22,4 @@ metadata:
 
 2. UI / 交互相关验收
    - 对 UI 表现、交互、视觉一致性等无法自动化验证的变更，需明确标记为 **人工验收**，并给出验收点。
+"""
