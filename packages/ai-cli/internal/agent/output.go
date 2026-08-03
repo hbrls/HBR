@@ -81,11 +81,18 @@ func normalizeChainExe(layers []ChainBlock) []string {
 // 避免同一工具因平台差异 / 子进程形态造成链路输出中的身份分裂。
 var knownExeAliases = map[string]string{
 	// macOS
+	"/Applications/Visual Studio Code.app": "VSCode",
+
 	"/Windsurf":        "Windsurf",
 	"/Windsurf Helper": "Windsurf",
 
+	"/.vscode/extensions/kilocode": "KiloCode-vsix",
+
 	"/iTerm2":       "iTerm2",
 	"/iTermServer-": "iTerm2", // 捕获 "/.../iTermServer-3.4.19" 等版本变体（子串匹配）
+
+	"/Applications/ChatGPT.app/Contents/MacOS/ChatGPT":       "ChatGPT",
+	"/Applications/ChatGPT.app/Contents/Resources/codex":     "Codex",
 
 	"/launchd": "", // macOS 系统 PID 1，所有用户态进程的终极祖先，无身份区分价值
 
@@ -101,9 +108,12 @@ var knownExeAliases = map[string]string{
 	`\Git\bin\bash.exe`:     "GitBash",
 
 	`\powershell.exe`:                     "PowerShell",
-	`\WindowsApps\Microsoft.PowerShell_7`: "PowserShell7",
+	`\WindowsApps\Microsoft.PowerShell_7`: "PowerShell7",
 	`\WindowsTerminal.exe`:                "WindowsTerminal",
 	`\System32\cmd.exe`:                   "WindowsCmd",
+
+	`\ChatGPT.exe`: "ChatGPT",
+	`\codex.exe`:   "Codex",
 
 	`\.vscode\extensions\kilocode`: "KiloCode-vsix",
 	`\plugins\cline\core`:          "Cline-jbp",
