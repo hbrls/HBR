@@ -26,22 +26,22 @@ version:
 # 构建当前平台版本
 build:
 	mkdir -p $(DIST)
-	go build $(GO_BUILD_FLAGS) -o $(DIST)/ai .
+	go build $(GO_BUILD_FLAGS) -o $(DIST)/backstage .
 
 # 构建 macOS 版本
 build-mac:
 	mkdir -p $(DIST)
-	GOOS=darwin GOARCH=arm64 go build $(RELEASE_BUILD_FLAGS) -o $(DIST)/ai .
+	GOOS=darwin GOARCH=arm64 go build $(RELEASE_BUILD_FLAGS) -o $(DIST)/backstage .
 
 # 构建 Linux 版本
 build-linux:
 	mkdir -p $(DIST)
-	GOOS=linux GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(DIST)/ai-linux-amd64 .
+	GOOS=linux GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(DIST)/backstage-linux-amd64 .
 
 # 构建 Windows 版本
 build-windows:
 	mkdir -p $(DIST)
-	GOOS=windows GOARCH=amd64 go build $(RELEASE_BUILD_FLAGS) -o $(DIST)/ai.exe .
+	GOOS=windows GOARCH=amd64 go build $(RELEASE_BUILD_FLAGS) -o $(DIST)/backstage.exe .
 
 # 构建所有平台
 build-all: build-mac build-linux build-windows

@@ -1,3 +1,4 @@
+# build-windows.ps1 — 只执行 Windows Release 构建
 if ($args.Count -ne 0) {
     Write-Error "Usage: .\build-windows.ps1"
     exit 2
@@ -12,5 +13,5 @@ if (-not (Test-Path $DIST)) {
 }
 $env:GOOS = "windows"
 $env:GOARCH = "amd64"
-go build -trimpath -ldflags $LDFLAGS -o "$DIST/ai.exe" .
-Write-Host "Build complete: $DIST/ai.exe"
+go build -trimpath -ldflags $LDFLAGS -o "$DIST/backstage.exe" .
+Write-Host "Build complete: $DIST/backstage.exe"
