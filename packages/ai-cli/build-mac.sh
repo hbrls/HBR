@@ -1,12 +1,11 @@
 #!/bin/bash
-# build-mac.sh — 薄壳脚本，转发到 Makefile
-# 无参数：构建 macOS 版本（make build-mac）
-# 有参数：透传给 make，例如 ./build-mac.sh clean
+# build-mac.sh — 只执行 macOS Release 构建
 set -e
 cd "$(dirname "$0")"
 
-if [ $# -eq 0 ]; then
-    exec make build-mac
-else
-    exec make "$@"
+if [ $# -ne 0 ]; then
+    echo "Usage: $0" >&2
+    exit 2
 fi
+
+exec make build-mac
