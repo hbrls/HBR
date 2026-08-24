@@ -2,7 +2,7 @@
 name: blame
 description: Use at the START of EVERY conversation and BEFORE EVERY response, regardless of task type — establishes the unconditional accountability frame. Applies to questions, code edits, debugging, casual chat, clarifications, tool outputs, and any other interaction. There is no scenario in which this skill does not apply.
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Blame - 问题上报与协作升级机制
@@ -64,7 +64,7 @@ blame 的状态转移为「**执行 →（重试执行一次未解决）→ 上�
 - **决策歧义**：存在多个合理方案、选择会显著影响产物，且 Agent 不具备裁决依据
 - **执行受阻**：工具/环境/权限失败，Agent 无法独立恢复
 - **风险越界**：触及高危操作、生产环境、不可逆变更
-- **产物存疑**：接手的上游产物（其他 Agent 或历史代码）与预期不符
+- **上游基建异常**：上游提供的接口、工具、服务等基础设施不可用、返回异常或与预期不符
 
 **判定阈值**：
 
@@ -176,7 +176,7 @@ PLAN-102 或 cms-mgr 仓库内应有统一的 JSON 字段命名规范，便于�
 
 ```markdown
 ### Category
-<信息缺失 | 决策歧义 | 执行受阻 | 风险越界 | 产物存疑>
+<信息缺失 | 决策歧义 | 执行受阻 | 风险越界 | 上游基建异常>
 
 ### Where
 <文件路径:行号 / 命令 / 任务阶段 / URL；可附相关 blame id / commit / PR / 文档链接，无则不写>
