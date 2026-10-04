@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- // 禁缩放三件套 + viewport-fit=cover 必须保留，微信内置浏览器下才会铺满且不可缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no, email=no, address=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#f5faf7">
+    <!-- // 生成时必须替换为本次答案的短标题，不得残留占位符 -->
+    <title>{答案短标题}</title>
+    <style>
+        /* ==========================================================
+           基线：4 屏「左右横滑」整屏吸附 + 卡面底部指示点（CSS scroll-snap，零 JS）
+           首帧策略：四屏几何从首帧起完整稳定；滑轨先关闭 snap，T+500ms 再开启。
+           整屏吸附三要素，缺一即不成立：
+             1) 滑轨 .deck 上声明 scroll-snap-type: x mandatory
+             2) 每屏 .screen 上声明 scroll-snap-align: start
+             3) 每屏 .screen 上声明 scroll-snap-stop: always（一次滑动只翻一屏）
+           版心沿用改造前的 360 × 680，且沿用改造前的纵向排布：
+             卡面顶部对齐 + 原有上边距（不垂直居中）
+           指示点为何能反映当前屏、为何挂在卡面底边：见 .dots 处注释
+           ========================================================== */
+
+        /* ---- 基础重置 ---- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        /* ---- 关闭浏览器的滚动锚定（scroll anchoring）----
+           它是什么：浏览器默认开启的一项行为——当滚动区域上方的内容尺寸发生变化时，
+           浏览器会自行调整滚动位置来"稳住"画面、减少跳动（Chromium 56+ / Firefox 66+ 默认开）。
+           为什么关：本页的滚动全部交给 .deck 横滑，
+           位置该由用户手势和 scroll-snap 决定，不需要浏览器代调。
+           写法：属性作用于「可能被选为锚点」的元素，而不是滚动容器本身，
+           所以用 * 整页关闭，而不是只写在 .deck 上。
+           边界（重要）：这是 CSS 属性，没有对应的 meta 头；
+           且 Safari / iOS 直到 Safari 27 / iOS 27（2026-09-14）才支持该特性，
+           在更早的 iOS 上这一行是空操作——不要据此认定某个问题已被修好。
+           动机备注：加它是为了排查「打开时不在第 1 屏」，该因果尚未确证。 */
+        * {
+            overflow-anchor: none;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* 页面自身不滚动，滚动交给 .deck（横向）；html 与 body 必须同时锁定 */
+            overflow: hidden;
+            background-color: #eef2f0;
+            color: #1f2a26;
+            font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* ---- 横向滑轨：整屏吸附的滚动容器 ---- */
+        .deck {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            min-height: 1px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            /* 旧版 WebKit（iOS 11/12）只认带前缀的写法，故双写 */
+            -webkit-scroll-snap-type: none;
+            scroll-snap-type: none;
+            /* step-end 到 500ms 结束点才切换；both 保持初始值和最终吸附状态 */
+            animation: enable-snap-later 500ms step-end both;
+            /* 阻断滚动链：第 1 屏继续右滑不再往外传 */
+            overscroll-behavior-x: contain;
+            /* 隐藏滚动条，避免横条破坏卡面观感（桌面预览用触控板左右滑） */
+            scrollbar-width: none;
+        }
+
+        .deck::-webkit-scrollbar {
+            display: none;
+        }
+
+        /*
+         * 首帧竞态规避（唯一初始化时序）：
+         * 四个 .screen 已从首帧起保持完整的 100% 宽度，滚动几何不会再因延迟渲染而变化。
+         * 仅把 snap 从首帧延后到 T+500ms，给 WebView 完成初始布局和状态恢复留出窗口。
+         * 这段动画是 CSS 离散切换，不读取、不写入 scrollLeft，也不依赖 JavaScript。
+         */
+        @keyframes enable-snap-later {
+            from {
+                -webkit-scroll-snap-type: none;
+                scroll-snap-type: none;
+            }
+
+            to {
+                -webkit-scroll-snap-type: x mandatory;
+                scroll-snap-type: x mandatory;
+            }
+        }
+
+        /* ---- 单屏：占满一屏宽 ---- */
+        .screen {
+            position: relative;
+            flex: 0 0 100%;
+            width: 100%;
+            min-height: 100vh;
+            height: auto;
+            /* 屏内不滚动；卡面固定为 360 × 680。纵向超出由 .deck 裁剪。 */
+            overflow: visible;
+            display: flow-root;
+            background-image: linear-gradient(180deg, #f5faf7 0%, #eef2f0 100%);
+            -webkit-scroll-snap-align: start;
+            scroll-snap-align: start;
+            -webkit-scroll-snap-stop: always;
+            scroll-snap-stop: always;
+        }
+
+        /* ---- 版心：固定 360 × 680，保持原有上边距并向上对齐 ----
+           微信已经把 body 的可视起点放在原生顶部栏之后，不再额外叠加顶部补偿。
+           保持普通文档流，兼容微信 WebView 的卡面渲染。 */
+        .content {
+            position: relative;
+            margin: 20px auto 0;
+            width: 360px;
+            /* 仅在最窄（< 360px）的屏幕上生效，兜底防横向溢出 */
+            max-width: 100%;
+            height: 680px;
+            /* 底部 56px 是给指示点留的位，正文不会撞到圆点 */
+            padding: 24px 22px 56px;
+            background-color: #ffffff;
+            border: 1px solid #e3ece7;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(31, 111, 84, 0.08);
+            overflow: hidden;
+        }
+
+        /* ---- 指示点：挂在卡面底边上（相对 .content，不是相对屏幕） ----
+           零 JS 下如何反映「当前第几屏」：
+           指示点不是一份固定的、靠 JS 改状态的组件，而是**每一屏各带一份**，
+           且每一份里都是「本屏对应的那颗为实心 .on、其余为空心」。
+           于是无论滑到哪一屏，视野里出现的那一份必然是正确的布局 —— 状态不需要读，
+           而是随屏一起被滑进来。故增删屏时必须同步增删每一屏的 .dots 内容。 */
+        .dots {
+            position: absolute;
+            left: 0;
+            right: 0;
+            /* 距卡面底边的距离 —— 唯一需要调的距离常量 */
+            bottom: 24px;
+            display: flex;
+            justify-content: center;
+            gap: 9px;
+            /* 纯指示，不拦截滑动 */
+            pointer-events: none;
+        }
+
+        /* 空心点：默认态 */
+        .dot {
+            width: 7px;
+            height: 7px;
+            border: 1px solid #c3d2cb;
+            border-radius: 50%;
+            background-color: transparent;
+        }
+
+        /* 实心点：本屏 */
+        .dot.on {
+            border-color: #1f6f54;
+            background-color: #1f6f54;
+        }
+
+        /* ---- 题眉：原问题，浅灰小字（屏 1） ---- */
+        .q {
+            margin: 0 0 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #edf3f0;
+            color: #9aa8a2;
+            font-size: 12px;
+            line-height: 1.6;
+            letter-spacing: 0.04em;
+        }
+
+        /* ---- 结论：一句话答案，大字顶住视觉重心（屏 1） ---- */
+        .a {
+            margin: 0;
+            color: #1f6f54;
+            font-size: 26px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        /* ---- 翻页提示：只留在屏 1；不需要可整段删除（连同本段样式） ---- */
+        .hint {
+            margin: 26px 0 0;
+            color: #9aa8a2;
+            font-size: 12px;
+            line-height: 1.6;
+            letter-spacing: 0.08em;
+            animation: nudge 2.4s ease-in-out infinite;
+        }
+
+        @keyframes nudge {
+            0%,
+            100% {
+                transform: translateX(0);
+                opacity: 0.55;
+            }
+
+            50% {
+                transform: translateX(4px);
+                opacity: 1;
+            }
+        }
+
+        /* // 尊重系统「减少动态效果」设置 */
+        @media (prefers-reduced-motion: reduce) {
+            .hint {
+                animation: none;
+            }
+        }
+
+        /* ---- 本屏小标题（屏 2） ---- */
+        .lead {
+            margin: 0 0 12px;
+            color: #1f6f54;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        /* ---- 支撑句 / 补充说明（屏 1 可多段，屏 2 单段） ---- */
+        .p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* 同屏堆叠多段 .p 时补段间距：结论后首段、以及段与段之间。
+           单段时该规则不生效，不会影响屏 2 与 .lead 的既有间距 */
+        .a + .p,
+        .p + .p {
+            margin-top: 14px;
+        }
+
+        /* ---- 可信度：未确证部分与如何定论（屏 3；无未确证内容则整段删除） ---- */
+        .note {
+            margin: 0;
+            padding: 12px 14px;
+            background-color: #f7fbf9;
+            border-left: 3px solid #a8d5c2;
+            border-radius: 8px;
+            color: #6f7d77;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* ---- 出处：纯文本，禁止写成可点链接（屏 3） ---- */
+        .src {
+            margin: 14px 0 0;
+            color: #9aa8a2;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <!-- // 横向滑轨：4 屏从左到右排列，左右滑动整屏吸附 -->
+    <div class="deck">
+        <!-- // ========== 屏 1 · 结论：题眉 + 大字结论 + 翻页提示 ========== -->
+        <section class="screen">
+            <div class="content">
+                    <p class="q">{原问题}</p>
+                    <p class="a">{一句话结论}</p>
+                    <!-- // 支撑句：0～3 段，每段一个 .p；按需增删整段，段间距由 .a + .p / .p + .p 规则自动处理 -->
+                    <p class="p">{支撑句一}</p>
+                    <p class="p">{支撑句二}</p>
+                    <p class="hint">→ 轻扫继续</p>
+                    <!-- // 指示点：贴在卡面底边内侧；本屏为第 1 屏，故第 1 颗实心 -->
+                    <div class="dots">
+                        <span class="dot on"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+            </div>
+        </section>
+
+        <!-- // ========== 屏 2 · 展开：小标题 + 一句补充说明 ========== -->
+        <section class="screen">
+            <div class="content">
+                    <!-- // 小标题：可省略，省略时连同 .lead 整段删除 -->
+                    <p class="lead">{本屏小标题}</p>
+                    <p class="p">{一句补充说明}</p>
+                    <!-- // 指示点：本屏为第 2 屏，故第 2 颗实心 -->
+                    <div class="dots">
+                        <span class="dot"></span>
+                        <span class="dot on"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+            </div>
+        </section>
+
+        <!-- // ========== 屏 3 · 依据：可信度 + 出处 ========== -->
+        <section class="screen">
+            <div class="content">
+                    <!-- // 可信度：仅当存在未确证部分时保留，否则整段删除 -->
+                    <p class="note">{未确证部分与如何定论}</p>
+                    <p class="src">{出处，纯文本}</p>
+                    <!-- // 指示点：本屏为第 3 屏，故第 3 颗实心 -->
+                    <div class="dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot on"></span>
+                        <span class="dot"></span>
+                    </div>
+            </div>
+        </section>
+
+        <!-- // ========== 屏 4 · 延伸：小标题 + 补充说明 ========== -->
+        <section class="screen">
+            <div class="content">
+                    <p class="lead">{延伸小标题}</p>
+                    <p class="p">{延伸说明}</p>
+                    <!-- // 指示点：本屏为第 4 屏，故第 4 颗实心 -->
+                    <div class="dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot on"></span>
+                    </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
