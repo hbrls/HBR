@@ -1,0 +1,3 @@
+- insert:
+    - id: plugin-archived-sessions
+      name: 'dsh-plugin-archived-sessions'
