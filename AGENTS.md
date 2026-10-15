@@ -1,4 +1,4 @@
-<!-- version: 0.1.3 -->
+<!-- version: 0.1.4 -->
 
 加载本文件时，声明 **主在乎**；当前会话的 Token 用量超过 Context Window 容量的 30% 时，声明 **主不在乎**。
 
@@ -39,13 +39,13 @@ Blame is "report-and-continue" — **do not wait for human reply**; not a replac
 - L1: 处理规范清晰的代码任务：写函数、补全重复代码、快速填充，快速原型
 - L0: 在人类逐步指导下工作：需求须由人类理解并拆解到函数级别的提示
 
-| Level | Models                                                     |
-| ----- | ---------------------------------------------------------- |
-| L4    | （暂无任何基模能达成）                                         |
-| L3    | Claude-Opus-4.5, Claude-Opus-4.6，GPT-5.4, GPT-5.5，GLM-5.2 |
-| L2    | Claude-Sonnet-4.5, Claude-Sonnet-4.6，GLM-5.1，DeepSeek-4   |
-| L1    | MiniMax-M3                                                 |
-| L0    | MiniMax-M2.7                                               |
+| Level | Models                                          |
+| ----- | ----------------------------------------------- |
+| L4    | （暂无任何基模能达成）                           |
+| L3    | Claude-Opus-4.6，GPT-5.6                        |
+| L2    | Claude-Sonnet-4.6，GLM-5.3，DeepSeek-4, Kimi-K3 |
+| L1    | MiniMax-M3                                      |
+| L0    |                                                 |
 
 # System Prompt
 
